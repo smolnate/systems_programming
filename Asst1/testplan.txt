@@ -1,0 +1,28 @@
+Test cases:
+
+Build
+Blank file: writes to a blank HuffmanCodebook with just the escape sequence and newline char
+“a dog and a cat and dog ran.” HuffmanCodebook included “ran.” as a token, duplicate a’s and and’s were accounted for. 
+Text file containing all integers from 1-100000 separated by newline: HuffmanCodebook creates a code for every integer as intended. Runtime: 3.482s clock time, 1.095s system
+Tested a file containing 10000 randomly generated strings with duplicates, separated by newlines: Runtime: 0.232s clock time, 0.158s system
+Recursive build:
+Tested having two text files in current directory
+Two text files, one in a subdirectory
+Nested subdirectories and multiple text files spaced in each
+
+Compress:
+Made test codebooks for files with multiple words and delimiters
+Checked that each compressed file generated holds expected bitstring
+Recursive compress:
+For each codebook made, I tested multiple files in 3 different levels of directories
+Checked that each compressed file generated holds expected bitstring
+
+Decompress
+After testing compress, I would compress all my test files, and decompress them to see it matches the original uncompressed file
+
+Recursive decompress:
+Same process as recursive compress
+
+
+
+

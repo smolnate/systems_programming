@@ -1,0 +1,77 @@
+#include <stdio.h> 
+#include <stdlib.h> 
+#include <unistd.h> 
+#include <pthread.h> 
+#include <signal.h>
+
+void signalHandler(int sig){
+    system("kill -kill WTFserver");
+    system("killall -kill WTF");
+    printf("Forced exit...\n");
+    exit(0);
+}
+
+void *serverThreadHandler(void* arg){
+    signal(SIGINT, signalHandler);
+    sleep(1);
+    printf("Starting the server using port number 66943...\n");
+    system("./WTFserver 66943");
+}
+
+int main(int argc, char**argv){
+    printf("Creating client and server directories...\n");
+    system("mkdir serverDir");
+    system("sleep 1");
+    system("mkdir clientDir");
+    system("sleep 1");
+    pthread_t serverthreadid;
+    printf("Creating thread to run server...\n");
+    pthread_create(&serverthreadid, NULL, serverThreadHandler, NULL);
+    signal(SIGINT, signalHandler);
+    printf("Beginning client operation...\n");
+    system("./WTF configure 127.0.0.1 66943"); //configure
+    system("sleep 1");
+    system("./WTF create newProject"); //create
+    system("sleep 1");
+    system("echo \"testing content\" >> ./clientDir/newProject/file1.txt");
+    system("sleep 1");
+    system("./WTF add newProject file1.txt"); //add
+    system("sleep 1");
+    system("./WTF commit newProject"); //commit
+    system("sleep 1");
+    system("./WTF push newProject"); //push
+    system("sleep 1");
+    system("./WTF currentversion newProject"); //current version
+    system("sleep 1");
+    system("rm -f ./clientDir/newProject/file1.txt"); // remove newProject from client
+    system("sleep 1");
+    system("rm -f ./clientDir/newProject/.Manifest"); //remove .manifest from client
+    system("sleep 1");
+    system("echo \"0\" >> ./clientDir/newProject/.Manifest"); //make client one version behind for update
+    system("./WTF update newProject"); //update
+    system("sleep 1");
+    system("./WTF upgrade newProject"); //upgrade
+    system("sleep 1");
+    system("./WTF history newProject"); //history
+    system("sleep 1");
+    system("./WTF rollback newProject 0"); //rollback
+    system("sleep 1");
+    system("./WTF destroy newProject"); //destroy
+    system("sleep 1");
+    system("mkdir -p ./serverDir/checkproj/"); //create project to checkout for client
+    system("sleep 1");
+    system("echo \"new file for new project\" >> ./serverDir/checkproj/newfile.txt"); //create file 
+    system("sleep 1");
+    system("echo \"1\" >> .serverDir/checkproj/.Manifest"); //manually create manifest
+    system("sleep 1");
+    system("echo \"T newfile.txt 0 dummyhashdummyhashdummyhash\" >> ./serverDir/checkproj/.Manifest"); //add file entry
+    system("sleep 1");
+    system("./WTF checkout checkproj"); //checkout 
+    system("sleep 10");
+    pthread_join(serverthreadid, NULL);
+    system("killall -kill WTF");
+    printf("Finished server thread...\n");
+    exit(0);
+
+    return 0;
+}

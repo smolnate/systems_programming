@@ -1,0 +1,44 @@
+In order to test our code, we created separate main functions in our separate c files before merging them into fileSort.c.
+
+For comparator.c:
+    Divided into two comparators, string and integer. Returns -1, 0, 1.
+    For string:
+        Tested for lexicographical order (with two strings a and b):
+        1. where a < b, i.e. a comes before b in the dictionary. a = apples, b = car. RETURNS -1
+        2. where a == b, i.e. a is the same string as b. a = car, b = car. RETURNS 0
+        3. where a > b, i.e. a comes after b in the dictionary. a = car, b = apples. RETURNS 1
+        4. where only a is empty string. RETURNS -1
+        5. where only b is empty string. RETURNS 1
+        5. where both a or b are empty strings. RETURNS 0
+    For integers:
+        converted values based on atoi, then compared new values.
+        empty strings converted to 0's.
+        1. where a < b. a = 500, b = 1000. RETURNS -1
+        2. where a == b. a = 1, b = 1. RETURNS 0
+        3. where a > b. a = 500, b = 1. RETURNS 1
+
+For sort.c:
+    created two different linked lists that held either all integers or all characters.
+    Both insertion sort and quicksort returned the same strings. When timing them using "time", 
+    quicksort was faster. As expected.
+    1->3->4->2->0 ===> RETURNS 0->1->2->3->4
+    hi->there->every->one ===> RETURNS every->hi->one->there
+    Tested for duplicates: 1->3->4->2->0->0 RETURNS 0->0->1->2->3->4
+    hi->hi->a->c RETURNS a->c->hi->hi
+
+
+For readFile.c and fileSort.c:
+    before merging comparator and sort, we wanted to print out if the file was properly tokenized and the 
+    linked list was added to accordingly. 
+    Then after merging sort and comparator, we ran edge cases to see if empty strings were handled accordingly,
+    as well as empty files and whitespaces, and negative numbers.
+    Also tested for all fatal errors.
+    5,   4, 3, 1, 1 RETURNS 1\n1\n3\n4\n5
+           ,3,       4,	,	RETURNS 0\n0\n3\n4
+    -5, -2, 1, 3   ,     -5 RETURNS   -5\n-5\n-2\n1\n3
+    ,   hi,    there,  			everyone RETURNS hi\nthere\neveryone
+    hi,,hi RETURNS \nhi\nhi
+    (empty file) RETURNS Warning: File "empty.txt" is empty!
+    ./fileSort -t empty.txt RETURNS Fatal Error: "-t" is not a valid sort flag
+    
+

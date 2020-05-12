@@ -1,0 +1,111 @@
+Configure
+Input: ./WTF configure 127.0.0.1 50000
+Expected Output: 
+.Configure file created with “127.0.0.1\n50000”
+Currentversion
+Input: ./WTF currentversion newProject
+Expected Output: 
+Prints out filename of file in project along with version number
+Ex.
+Filename: file1.txt
+Version: 0
+Create
+Input: ./WTF create newProject
+Expected: Success message and a newProject folder inside ./clientDir and ./serverDir
+Input: ./WTF create newProject (again to test error handling)
+Expected: Error message (project already exists) from both server and client
+Destroy
+Input: ./WTF destroy newProject 
+Expected: Success message and destroys newProject only on server
+Input: ./WTF destroy newProject (again to test error handling)
+Expected Output: Error message (project does not exist)
+Add
+Input: ./WTF add newProject file1.txt
+Expected Output: Success message and new entry in client’s .Manifest (entry format is [code] [filename] [file version] [hash])
+Input: ./WTF add newProject file1.txt (again)
+Expected Output: Message - File has already been added and no no new changes have been made
+Input: ./WTF add newProject file1.txt (again, but after changing file1.txt content)
+Expected Output: Success message and file1.txt’s entry code is changed from A to M (denoting modification)
+Input: ./WTF add newProject nonexistent.txt 
+Expected Output: Error message - File does not exist
+Input: ./WTF add nonexistentProject file1.txt
+Expected Output: Error Message - Project does not exist
+Remove
+Input: ./WTF remove newProject nonexistent.txt
+Expected Output: Error Message - File does not exist
+Input: ./WTF remove nonexistentProject file1.txt
+Expected Output: Error Message - Project does not exist
+Input: ./WTF remove newProject file1.txt
+Expected Output: Success message and file1.txt’s entry code is changed to a D (denoting a delete)
+Input: ./WTF remove newProject file1.txt (again)
+Expected Output: Success message and file1.txt’s entry stays the same
+Commit
+Input: ./WTF commit newProject (with nonempty .Update)
+Expected Output: Error Message due to nonempty .update
+Input: ./WTF commit newProject (with .Conflict)
+Expected Output: Error Message due to .conflict existing
+Input: ./WTF commit newProject (with no .Conflict and empty .Update)
+Expected Output: Success message
+creates .Commit with all file entries that are changed (file entries with code M,A,D)
+Every file entry in .Commit that was modified now has a modified hash (different from hash in .Manifest) and an incremented version number 
+For each file entry in .Commit, its code and file name is printed
+Ex. (D file1.txt)
+Server gives client a client_id and stores this id along with commit in a LL that holds all pending commits.
+Input: ./WTF commit newProject (client and server .Manifest versions don’t match)
+Expected Output: Error message
+Input: ./WTF commit newProject (again, with versions matching)
+Expected Output: Same as before
+Input: ./WTF commit project (nonexistent project)
+Expected Output: Error - project name doesn’t exist on client 
+Input: ./WTF commit newProject (right after pushing)
+Expected Output: Message - Nothing to commit
+Push
+Input: ./WTF push newProject (with .Commit file that has entries)
+Expected: Success message
+Deletes .Commit file
+Client .Manifest updates
+The version number is incremented
+All file entries that were in .Commit now have a T code (denoting tracked) 
+Files that were modified now have their modified hash 
+Previously tracked files in the .Manifest before committing and pushing are still there
+Server .Manifest looks exactly the same as client .Manifest
+Server’s newProject looks exactly like client’s
+Input: ./WTF push newProject (again, consecutively)
+Expected Output: Error message, no commit file 
+ 
+Update
+Input: ./WTF update newProject (client’s .Manifest is empty and server’s .Manifest has a file)
+Expected Output: Success Message
+Prints out “A [filepath]”
+Creates .Update file
+.Update file has an entry (A [filepath] [hash of file])
+Input: ./WTF update newProject (testing conflict: client has a file that is different from server’s file and has modified it)
+Expected Output: Conflict Message
+Prints out all [code] [filepath] like normal
+Creates .Conflict with conflicted file entry
+Upgrade
+Input: ./WTF upgrade newProject
+Expected Output: Success message
+Updated .Manifest (client’s .Manifest looks exactly like server’s)
+Client’s project directory looks exactly like server’s
+Currentversion
+Input: ./WTF currentversion newProject
+Expected Output: Prints out all files and their version numbers
+Ex: Filename is: file1.txt \n Version is: 1 \n Filename is: file2.txt \n Version is: 0 \n (and so on…)
+Checkout
+Input: ./WTF checkout newProject (exists on server dir)
+Expected Output: Success Message
+newProject is cloned from server to client 
+History
+Input ./WTF history newProject
+Expected Output: Success Message
+print .History to STDOUT (.History separates successful commits to project with projectversion and newline)
+0
+A file1 0 hash
+1
+M file1 1 hash
+A file2 0 hash
+Rollback
+Input: ./WTF rollback newProject 0 (after 1 successful push)
+Expected: Success message
+newProject directory is reverted back to version 0 for manifest and file contents. Backup folder should be empty at this point.
